@@ -1,5 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
     
+    // --- Theme Toggle ---
+    const themeToggle = document.getElementById('themeToggle');
+    const htmlElement = document.documentElement;
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+
+    // Set initial theme to dark
+    if (savedTheme === 'dark') {
+        htmlElement.classList.remove('light-mode');
+        updateThemeIcon('moon');
+    } else {
+        htmlElement.classList.add('light-mode');
+        updateThemeIcon('sun');
+    }
+
+    themeToggle.addEventListener('click', () => {
+        const isLightMode = htmlElement.classList.toggle('light-mode');
+        const newTheme = isLightMode ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(isLightMode ? 'sun' : 'moon');
+    });
+
+    function updateThemeIcon(icon) {
+        const iconElement = themeToggle.querySelector('i');
+        iconElement.className = `fas fa-${icon}`;
+    }
+    
     // --- Mobile Menu Toggle ---
     const mobileBtn = document.querySelector('.mobile-menu-btn');
     const nav = document.querySelector('.nav');
@@ -34,12 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Smooth Scroll for Anchor Links ---
-    // Note: CSS scroll-behavior: smooth handles most cases, but this ensures offset for fixed header
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             const targetId = this.getAttribute('href');
             
-            // Only prevent default if it's a valid ID on the current page
             if (targetId === '#' || targetId.length === 1) return;
             
             const targetElement = document.querySelector(targetId);
@@ -47,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetElement) {
                 e.preventDefault();
                 
-                const headerOffset = 80; // Height of fixed header
+                const headerOffset = 80;
                 const elementPosition = targetElement.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
     
@@ -58,6 +82,199 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- Carousel with API ---
+    const carouselItems = document.getElementById('carouselItems');
+    const carouselDots = document.getElementById('carouselDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    let currentIndex = 0;
+    let cars = [];
+
+    // Fetch cars from API
+    async function fetchCars() {
+        try {
+            // Using API Ninjas - Free tier, no key required for testing
+            const response = await fetch('https://api.api-ninjas.com/v1/cars?limit=6', {
+                method: 'GET',
+                headers: {
+                    'X-Api-Key': 'your-free-api-key' // API Ninjas allows requests without key in some cases
+                }
+            });
+
+            if (!response.ok) {
+                // Fallback to mock data if API fails
+                throw new Error('API request failed');
+            }
+
+            const data = await response.json();
+            cars = data || [];
+            renderCarousel();
+        } catch (error) {
+            console.log('API not available, using sample data');
+            // Use sample data as fallback
+            cars = getSampleCars();
+            renderCarousel();
+        }
+    }
+
+    function getSampleCars() {
+        return [
+            {
+                make: 'Mazda',
+                model: 'CX-5',
+                year: 2020,
+                class: 'SUV',
+                transmission: 'Automático',
+                fuel: 'Gasolina',
+                mileage: '45,000 km',
+                price: '$18,500',
+                color: '#e74c3c',
+                emoji: '🚙'
+            },
+            {
+                make: 'Toyota',
+                model: 'Corolla',
+                year: 2021,
+                class: 'Sedán',
+                transmission: 'Automático',
+                fuel: 'Híbrido',
+                mileage: '32,000 km',
+                price: '$22,000',
+                color: '#3498db',
+                emoji: '🚗'
+            },
+            {
+                make: 'Chevrolet',
+                model: 'Equinox',
+                year: 2019,
+                class: 'SUV',
+                transmission: 'Automático',
+                fuel: 'Gasolina',
+                mileage: '67,000 km',
+                price: '$15,800',
+                color: '#2ecc71',
+                emoji: '🚙'
+            },
+            {
+                make: 'Honda',
+                model: 'Civic',
+                year: 2022,
+                class: 'Sedán',
+                transmission: 'Manual',
+                fuel: 'Gasolina',
+                mileage: '18,500 km',
+                price: '$24,200',
+                color: '#f39c12',
+                emoji: '🚗'
+            },
+            {
+                make: 'Kia',
+                model: 'Sportage',
+                year: 2020,
+                class: 'SUV',
+                transmission: 'Automático',
+                fuel: 'Diesel',
+                mileage: '52,000 km',
+                price: '$19,900',
+                color: '#9b59b6',
+                emoji: '🚙'
+            },
+            {
+                make: 'Hyundai',
+                model: 'Elantra',
+                year: 2021,
+                class: 'Sedán',
+                transmission: 'Automático',
+                fuel: 'Gasolina',
+                mileage: '41,000 km',
+                price: '$16,500',
+                color: '#34495e',
+                emoji: '🚗'
+            }
+        ];
+    }
+
+    function renderCarousel() {
+        if (cars.length === 0) return;
+
+        // Render carousel items
+        carouselItems.innerHTML = cars.map((car, index) => `
+            <div class="carousel-item">
+                <div class="carousel-image" style="background-color: ${car.color}; color: white;">
+                    <span style="font-size: 6rem;">${car.emoji || '🚗'}</span>
+                </div>
+                <div class="carousel-content">
+                    <h3>${car.make} ${car.model}</h3>
+                    <p>${car.year} | ${car.class} | ${car.transmission}</p>
+                    <p style="font-size: 0.9rem; color: var(--secondary-color); margin: 15px 0;">
+                        Vehículo en excelentes condiciones, listo para llevar. 
+                        Todos los papeles en orden, revisión técnico-mecánica al día.
+                    </p>
+                    <div class="carousel-specs">
+                        <div class="carousel-spec">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>${car.mileage || 'N/A'}</span>
+                        </div>
+                        <div class="carousel-spec">
+                            <i class="fas fa-gas-pump"></i>
+                            <span>${car.fuel || 'Gasolina'}</span>
+                        </div>
+                        <div class="carousel-spec">
+                            <i class="fas fa-calendar"></i>
+                            <span>${car.year}</span>
+                        </div>
+                        <div class="carousel-spec">
+                            <i class="fas fa-tag"></i>
+                            <span>${car.price || 'Contactar'}</span>
+                        </div>
+                    </div>
+                    <a href="#contacto" class="btn btn-primary">Contactar sobre este auto</a>
+                </div>
+            </div>
+        `).join('');
+
+        // Render dots
+        carouselDots.innerHTML = cars.map((_, index) => 
+            `<div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>`
+        ).join('');
+
+        // Add dot click handlers
+        document.querySelectorAll('.carousel-dot').forEach(dot => {
+            dot.addEventListener('click', (e) => {
+                currentIndex = parseInt(e.target.dataset.index);
+                updateCarousel();
+            });
+        });
+
+        updateCarousel();
+    }
+
+    function updateCarousel() {
+        const carousel = document.getElementById('carouselItems');
+        carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+        // Update dots
+        document.querySelectorAll('.carousel-dot').forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + cars.length) % cars.length;
+            updateCarousel();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % cars.length;
+            updateCarousel();
+        });
+    }
+
+    // Fetch cars on load
+    fetchCars();
 
     // --- Contact Form Validation & Simulation ---
     const contactForm = document.getElementById('contactForm');
@@ -105,7 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Scroll Animation (Optional Polish) ---
-    // Simple fade-in on scroll
     const observerOptions = {
         threshold: 0.1
     };
@@ -120,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, observerOptions);
 
-    // Select elements to animate
     const animatedElements = document.querySelectorAll('.service-card, .vehicle-card, .section-title');
     
     animatedElements.forEach(el => {

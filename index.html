@@ -30,6 +30,10 @@
                 <i class="fas fa-bars"></i>
             </button>
 
+            <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+                <i class="fas fa-moon"></i>
+            </button>
+
             <nav class="nav">
                 <ul class="nav-list">
                     <li><a href="#inicio" class="nav-link active">Inicio</a></li>
@@ -42,8 +46,7 @@
         </div>
     </header>
 
-    <main>
-        <!-- Hero Section -->
+        <!-- Sección Hero -->
         <section id="inicio" class="hero">
             <div class="container hero-container">
                 <div class="hero-content">
@@ -135,8 +138,37 @@
             </div>
         </section>
 
-        <!-- Vehículos Destacados -->
-        <section id="vehiculos" class="featured section-padding">
+        <!-- Carrusel de Carros con API -->
+        <section class="featured section-padding">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 class="section-title">Carros Disponibles Ahora</h2>
+                    <p class="section-desc">Navega por nuestro catálogo dinámico de vehículos seleccionados.</p>
+                </div>
+
+                <div class="carousel">
+                    <div class="carousel-wrapper">
+                        <div class="carousel-items" id="carouselItems">
+                            <div class="carousel-item">
+                                <div class="carousel-loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>Cargando carros disponibles...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-controls">
+                            <button class="carousel-btn" id="prevBtn" aria-label="Anterior">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="carousel-btn" id="nextBtn" aria-label="Siguiente">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="carousel-dots" id="carouselDots"></div>
+                </div>
+            </div>
+        </section>
             <div class="container">
                 <div class="section-header text-center">
                     <h2 class="section-title">Vehículos Destacados</h2>
@@ -206,10 +238,6 @@
                             <a href="vista-secundaria.html" class="btn btn-sm btn-outline">Ver detalles</a>
                         </div>
                     </article>
-                </div>
-                
-                <div class="text-center mt-4">
-                    <a href="vista-secundaria.html" class="btn btn-primary">Ver inventario completo</a>
                 </div>
             </div>
         </section>
