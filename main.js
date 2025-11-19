@@ -92,19 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentIndex = 0;
     let cars = [];
 
-    // Fetch cars from API
+    // Fetch cars from MockAPI
     async function fetchCars() {
         try {
-            // Using API Ninjas - Free tier, no key required for testing
-            const response = await fetch('https://api.api-ninjas.com/v1/cars?limit=6', {
-                method: 'GET',
-                headers: {
-                    'X-Api-Key': 'your-free-api-key' // API Ninjas allows requests without key in some cases
-                }
-            });
-
+            // MockAPI endpoint
+            const response = await fetch('https://691e2f61bb52a1db22bd3fbb.mockapi.io/api/v1/cars?limit=6');
+            
             if (!response.ok) {
-                // Fallback to mock data if API fails
                 throw new Error('API request failed');
             }
 
@@ -112,8 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
             cars = data || [];
             renderCarousel();
         } catch (error) {
-            console.log('API not available, using sample data');
-            // Use sample data as fallback
+            console.log('Using sample data');
+            // Fallback to sample data
             cars = getSampleCars();
             renderCarousel();
         }
